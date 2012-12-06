@@ -1,4 +1,4 @@
 Tzolkin
 =======
 
-A Wordpress Events Calendar
+A Wordpress Events Plugin
