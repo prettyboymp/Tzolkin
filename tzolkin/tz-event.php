@@ -11,10 +11,12 @@ final class TZ_Event {
 	private static $start_time = 'tz-start-time';
 	private static $end_date   = 'tz-end-date';
 	private static $end_time   = 'tz-end-time';
+	private static $location   = 'tz-location';
 
 	private static $start_meta   = 'tz_start';
 	private static $end_meta     = 'tz_end';
 	private static $all_day_meta = 'tz_all_day';
+	private static $location_meta = 'tz_location';
 	private static $mysql_format = 'Y-m-d H:i:s';
 
 	private static $year_tag  = 'tz_year';
@@ -125,6 +127,38 @@ final class TZ_Event {
 		global $post;
 		return event_is_all_day($post->ID);
 	}
+	
+	public static function event_is_same_day($post_id) {
+		$dates = static::get_event_dates($post_id);
+		$start = $dates['start'];
+		$end = $dates['end'];
+		$format = 'Ymd';
+		return $start->format($format) === $end->format($format);
+	}
+
+	public static function is_same_day() {
+		global $post;
+		return self::event_is_same_day($post->ID);
+	}
+
+	public static function get_event_location($post_id) {
+		return get_post_meta($post_id, self::$location_meta, true);
+	}
+
+	public static function get_location() {
+		global $post;
+		return self::get_event_location($post->ID);
+	}
+
+	public static function the_event_location($post_id) {
+		echo self::get_event_location($post_id);
+	}
+
+	public static function the_location() {
+		global $post;
+		return self::the_event_location($post->ID);
+	}
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// POST META MAGIC!
@@ -179,6 +213,7 @@ final class TZ_Event {
 		
 		$start_str = get_post_meta($event->ID, self::$start_meta, true);
 		$end_str = get_post_meta($event->ID, self::$end_meta, true);
+		$location = get_post_meta($event->ID, self::$location_meta, true);
 		
 		$start = new DateTime($start_str ? $start_str : current_time('mysql'));
 		$end = new DateTime($end_str ? $end_str : current_time('mysql'));
@@ -206,6 +241,10 @@ final class TZ_Event {
 				<input type="text" name="<?php echo self::$end_time; ?>" id="<?php echo self::$end_time; ?>" 
 				 class="tz-input tz-time" value="<?php esc_attr_e($end->format('h:i A')); ?>" />
 			</p>
+			<p>
+				<label for="<?php echo self::$location; ?>">Location</label></br/>
+				<input type="text" name="<?php echo self::$location; ?>" value="<?php esc_attr_e($location); ?>" style="width:100%;"/>
+			</p>
 		<?php
 	}
 
@@ -214,6 +253,7 @@ final class TZ_Event {
 		$all_day = isset($_POST[self::$all_day]);
 		$start = new DateTime(sprintf('%s %s', $_POST[self::$start_date], $_POST[self::$start_time]));
 		$end = new DateTime(sprintf('%s %s', $_POST[self::$end_date], $_POST[self::$end_time]));
+		$location = trim(strip_tags($_POST[self::$location]));
 
 		if ($start > $end) 
 			$end = clone $start;
@@ -226,6 +266,7 @@ final class TZ_Event {
 		update_post_meta($post_id, self::$all_day_meta, $all_day);
 		update_post_meta($post_id, self::$start_meta, $start->format(self::$mysql_format));
 		update_post_meta($post_id, self::$end_meta, $end->format(self::$mysql_format));
+		update_post_meta($post_id, self::$location_meta, $location);
 
 		return $post_id;
 	}

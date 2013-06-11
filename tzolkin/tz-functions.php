@@ -70,3 +70,27 @@ if (!function_exists('tz_is_all_day')) {
 		return TZ_Event::is_all_day();
 	}
 }
+
+if (!function_exists('tz_event_is_same_day')) {
+	function tz_event_is_same_day($post_id) {
+		return TZ_Event::event_is_same_day($post_id);
+	}
+}
+
+if (!function_exists('tz_is_same_day')) {
+	function tz_is_same_day() {
+		return TZ_Event::is_same_day();
+	}
+}
+
+if (!function_exists('tz_get_event_location')) {
+	function tz_get_event_location($post_id) {
+		return TZ_Event::get_event_location($post_id);
+	}
+}
+
+if (!function_exists('tz_get_location')) {
+	function tz_get_location() {
+		return TZ_Event::get_location();
+	}
+}
