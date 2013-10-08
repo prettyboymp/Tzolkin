@@ -37,6 +37,7 @@ define('TZ_URL', plugin_dir_url(__FILE__));
 
 require_once TZ_PATH.'tz-event.php';
 require_once TZ_PATH.'tz-functions.php';
+require_once TZ_PATH.'tz-admin.php';
 
 ////////////////////////////////////////////////////////////////////////////////
 // ROOT PLUGIN CLASS
@@ -57,6 +58,7 @@ final class TZ_Tzolkin {
 
 	public static function initialize() {
 		TZ_Event::initialize();
+		TZ_Admin::initialize();
 	}
 
 }
